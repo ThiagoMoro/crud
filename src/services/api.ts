@@ -4,10 +4,7 @@ export interface Record {
   email: string;
 }
 
-let mockData: Record[] = [
-  { id: 1, name: "John Smith", email: "john@example.com" },
-  { id: 2, name: "Emma Brown", email: "emma@example.com" },
-];
+let mockData: Record[] = [];
 
 const simulateDelay = <T>(data: T, ms = 500) =>
   new Promise<T>(resolve => setTimeout(() => resolve(data), ms));
