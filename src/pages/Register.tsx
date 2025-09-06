@@ -8,9 +8,17 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email) return setAlert({ type: "error", message: "Please fill all fields" });
+    if (!validateEmail(email)) {
+      setAlert({ type: "error", message: "Please enter a valid email address." });
+      return;
+    }
 
     setLoading(true);
     try {
