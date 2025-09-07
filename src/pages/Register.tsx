@@ -15,6 +15,7 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validateEmail(email)) {
       setAlert({ type: "error", message: "Please enter a valid email address." });
       return;
@@ -36,8 +37,10 @@ export default function Register() {
   return (
     <div className="p-6 max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">Register a New Record</h2>
+
       {alert && <Alert type={alert.type} message={alert.message} />}
-      <form onSubmit={handleSubmit} className="space-y-4">
+
+      <form onSubmit={handleSubmit} noValidate className="space-y-4">
         <input
           type="text"
           placeholder="Name"

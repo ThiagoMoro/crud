@@ -22,6 +22,11 @@ export default function ViewRecords() {
     fetchRecords();
   }, []);
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this record?")) return;
     await api.deleteRecord(id);
@@ -37,6 +42,12 @@ export default function ViewRecords() {
 
   const saveEdit = async () => {
     if (editingId === null) return;
+
+    if (!validateEmail(editEmail)) {
+      setAlert({ type: "error", message: "Please enter a valid email address." });
+      return;
+    }
+
     const updated = await api.updateRecord(editingId, { name: editName, email: editEmail });
     if (updated) {
       setRecords(prev => prev.map(r => r.id === updated.id ? updated : r));
