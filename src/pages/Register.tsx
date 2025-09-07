@@ -5,7 +5,7 @@ import Alert from "../components/Alert";
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const validateEmail = (email: string) => {
@@ -21,33 +21,43 @@ export default function Register() {
       return;
     }
 
-    setLoading(true);
+    if (!file) {
+      setAlert({ type: "error", message: "Please upload a file." });
+      return;
+    }
+
     try {
-      await api.addRecord({ name, email });
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("file", file);
+
+      const newRecord = await api.addRecord({
+        name,
+        email,
+        file,
+      });
+
+      setAlert({ type: "success", message: "Record added successfully!" });
       setName("");
       setEmail("");
-      setAlert({ type: "success", message: "Record added successfully!" });
+      setFile(null);
     } catch {
       setAlert({ type: "error", message: "Error adding record." });
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div className="p-6 max-w-md mx-auto">
       <h2 className="text-xl font-bold mb-4">Register a New Record</h2>
-
       {alert && <Alert type={alert.type} message={alert.message} />}
-
-      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="Name"
           className="w-full p-2 border rounded"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          disabled={loading}
         />
         <input
           type="email"
@@ -55,14 +65,18 @@ export default function Register() {
           className="w-full p-2 border rounded"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
+        />
+        <input
+          type="file"
+          accept="application/pdf"
+          className="w-full p-2 border rounded"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
         />
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          {loading ? "Submitting..." : "Submit"}
+          Submit
         </button>
       </form>
     </div>

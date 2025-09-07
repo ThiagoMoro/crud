@@ -30,7 +30,7 @@ export default function ViewRecords() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this record?")) return;
     await api.deleteRecord(id);
-    setRecords(prev => prev.filter(r => r.id !== id));
+    setRecords((prev) => prev.filter((r) => r.id !== id));
     setAlert({ type: "success", message: "Record deleted successfully!" });
   };
 
@@ -50,7 +50,7 @@ export default function ViewRecords() {
 
     const updated = await api.updateRecord(editingId, { name: editName, email: editEmail });
     if (updated) {
-      setRecords(prev => prev.map(r => r.id === updated.id ? updated : r));
+      setRecords((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
       setEditingId(null);
       setAlert({ type: "success", message: "Record updated successfully!" });
     } else {
@@ -70,35 +70,77 @@ export default function ViewRecords() {
         <p className="text-gray-500 mt-4">No records found.</p>
       ) : (
         <ul className="space-y-3">
-          {records.map(record => (
-            <li key={record.id} className="flex justify-between items-center p-3 bg-gray-100 rounded shadow">
+          {records.map((record) => (
+            <li
+              key={record.id}
+              className="flex justify-between items-center p-3 bg-gray-100 rounded shadow"
+            >
               {editingId === record.id ? (
                 <div className="flex flex-col flex-1 mr-4 space-y-2">
                   <input
                     className="p-1 border rounded"
                     value={editName}
-                    onChange={e => setEditName(e.target.value)}
+                    onChange={(e) => setEditName(e.target.value)}
                   />
                   <input
                     className="p-1 border rounded"
                     value={editEmail}
-                    onChange={e => setEditEmail(e.target.value)}
+                    onChange={(e) => setEditEmail(e.target.value)}
                   />
                 </div>
               ) : (
-                <span>{record.name} — {record.email}</span>
+                <div className="flex-1">
+                  <span>
+                    {record.name} — {record.email}
+                  </span>
+                  <div className="mt-2">
+                    {record.file ? (
+                      <a
+                        href={record.file}
+                        download={record.fileName}
+                        className="text-blue-600 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {record.fileName || "View Attached File"}
+                      </a>
+                    ) : (
+                      <span className="text-gray-500">No file attached</span>
+                    )}
+                  </div>
+                </div>
               )}
 
               <div className="flex space-x-2">
                 {editingId === record.id ? (
                   <>
-                    <button onClick={saveEdit} className="text-green-600 hover:underline">Save</button>
-                    <button onClick={cancelEdit} className="text-gray-600 hover:underline">Cancel</button>
+                    <button
+                      onClick={saveEdit}
+                      className="text-green-600 hover:underline"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={cancelEdit}
+                      className="text-gray-600 hover:underline"
+                    >
+                      Cancel
+                    </button>
                   </>
                 ) : (
                   <>
-                    <button onClick={() => startEdit(record)} className="text-blue-600 hover:underline">Edit</button>
-                    <button onClick={() => handleDelete(record.id)} className="text-red-600 hover:underline">Delete</button>
+                    <button
+                      onClick={() => startEdit(record)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(record.id)}
+                      className="text-red-600 hover:underline"
+                    >
+                      Delete
+                    </button>
                   </>
                 )}
               </div>
